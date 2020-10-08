@@ -1,0 +1,193 @@
+Proposal for Data Analysis Project
+SQL for Data Science Week 1 Capstone Project
+Ricardo A. Garcia Osio
+2020-10-07
+Overview
+Load Packages
+Import Data
+Observe data using R
+Exploratory analysis with R
+Create Database
+Observe the data using SQL
+Exploratory analysis with SQL
+Olympics data
+noc data
+Discussion
+Entity Relationship Diagram (ERD)
+Hypothesis
+Question
+Approach
+Overview
+The data used for this analysis is Olympics Dataset - 120 years of data. The dataset, originally, is made up of two files viz. athlete_events.csv and noc_regions.csv as seen on the site 120 years of Olympic history: athletes and results. This dataset was chosen because it gives the records of Olympics medal awards for different categories of sport, the countries that participated in the games, names, age, medals etc. The dataset is useful for news agencies reporting about the different feats in the 120 years of Olympics games existence. The dataset can also be a wealth of information for countries aspiring to improve on their performance in the subsequent Olympics events.
+
+
+
+Load Packages
+The following R packages are used for this analysis:
+
+data.table
+RSQLite
+readr
+Import Data
+Getting and Cleaning Data
+The data analysis is done using R. The required packages are loaded into R studio and the data files are read into R. Observe the structure of the data and display few rows of the tables.
+
+tibble [271,116 x 15] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ ID    : num [1:271116] 1 2 3 4 5 5 5 5 5 5 ...
+ $ Name  : chr [1:271116] "A Dijiang" "A Lamusi" "Gunnar Nielsen Aaby" "Edgar Lindenau Aabye" ...
+ $ Sex   : chr [1:271116] "M" "M" "M" "M" ...
+ $ Age   : num [1:271116] 24 23 24 34 21 21 25 25 27 27 ...
+ $ Height: num [1:271116] 180 170 NA NA 185 185 185 185 185 185 ...
+ $ Weight: num [1:271116] 80 60 NA NA 82 82 82 82 82 82 ...
+ $ Team  : chr [1:271116] "China" "China" "Denmark" "Denmark/Sweden" ...
+ $ NOC   : chr [1:271116] "CHN" "CHN" "DEN" "DEN" ...
+ $ Games : chr [1:271116] "1992 Summer" "2012 Summer" "1920 Summer" "1900 Summer" ...
+ $ Year  : num [1:271116] 1992 2012 1920 1900 1988 ...
+ $ Season: chr [1:271116] "Summer" "Summer" "Summer" "Summer" ...
+ $ City  : chr [1:271116] "Barcelona" "London" "Antwerpen" "Paris" ...
+ $ Sport : chr [1:271116] "Basketball" "Judo" "Football" "Tug-Of-War" ...
+ $ Event : chr [1:271116] "Basketball Men's Basketball" "Judo Men's Extra-Lightweight" "Football Men's Football" "Tug-Of-War Men's Tug-Of-War" ...
+ $ Medal : chr [1:271116] NA NA NA "Gold" ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   ID = col_double(),
+  ..   Name = col_character(),
+  ..   Sex = col_character(),
+  ..   Age = col_double(),
+  ..   Height = col_double(),
+  ..   Weight = col_double(),
+  ..   Team = col_character(),
+  ..   NOC = col_character(),
+  ..   Games = col_character(),
+  ..   Year = col_double(),
+  ..   Season = col_character(),
+  ..   City = col_character(),
+  ..   Sport = col_character(),
+  ..   Event = col_character(),
+  ..   Medal = col_character()
+  .. )
+tibble [230 x 3] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ NOC   : chr [1:230] "AFG" "AHO" "ALB" "ALG" ...
+ $ region: chr [1:230] "Afghanistan" "Curacao" "Albania" "Algeria" ...
+ $ notes : chr [1:230] NA "Netherlands Antilles" NA NA ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   NOC = col_character(),
+  ..   region = col_character(),
+  ..   notes = col_character()
+  .. )
+Observe data using R
+
+
+Exploratory analysis with R
+
+
+# A tibble: 6 x 15
+     ID Name  Sex     Age Height Weight Team  NOC   Games  Year Season City 
+  <dbl> <chr> <chr> <dbl>  <dbl>  <dbl> <chr> <chr> <chr> <dbl> <chr>  <chr>
+1     1 A Di~ M        24    180     80 China CHN   1992~  1992 Summer Barc~
+2     2 A La~ M        23    170     60 China CHN   2012~  2012 Summer Lond~
+3     3 Gunn~ M        24     NA     NA Denm~ DEN   1920~  1920 Summer Antw~
+4     4 Edga~ M        34     NA     NA Denm~ DEN   1900~  1900 Summer Paris
+5     5 Chri~ F        21    185     82 Neth~ NED   1988~  1988 Winter Calg~
+6     5 Chri~ F        21    185     82 Neth~ NED   1988~  1988 Winter Calg~
+# ... with 3 more variables: Sport <chr>, Event <chr>, Medal <chr>
+
+
+
+# A tibble: 6 x 3
+  NOC   region      notes               
+  <chr> <chr>       <chr>               
+1 AFG   Afghanistan <NA>                
+2 AHO   Curacao     Netherlands Antilles
+3 ALB   Albania     <NA>                
+4 ALG   Algeria     <NA>                
+5 AND   Andorra     <NA>                
+6 ANG   Angola      <NA>                
+
+
+Create Database
+An empty SQLite database is created to store the olympics and noc data. Then, tables are created in the database. Observe the tables in the database and the columns for each table.
+
+# Create SQLite database
+conn <- dbConnect(SQLite(), 'noc_olympics.db')
+
+# Create tables in the database
+dbWriteTable(conn, "olymp", olympics, overwrite = TRUE)
+dbWriteTable(conn, "nc", noc, overwrite = TRUE)
+
+# Observe the tables in the database
+dbListTables(conn)
+[1] "nc"    "olymp"
+# Observe the columns of these tables
+dbListFields(conn, "olymp")
+ [1] "ID"     "Name"   "Sex"    "Age"    "Height" "Weight" "Team"   "NOC"   
+ [9] "Games"  "Year"   "Season" "City"   "Sport"  "Event"  "Medal" 
+dbListFields(conn, "nc")
+[1] "NOC"    "region" "notes" 
+
+
+Observe the data using SQL
+
+
+Exploratory analysis with SQL
+
+
+Olympics data
+
+
+
+-- olympics data
+SELECT * FROM olymp LIMIT 6;
+6 records
+ID	Name	Sex	Age	Height	Weight	Team	NOC	Games	Year	Season	City	Sport	Event	Medal
+1	A Dijiang	M	24	180	80	China	CHN	1992 Summer	1992	Summer	Barcelona	Basketball	Basketball Men's Basketball	NA
+2	A Lamusi	M	23	170	60	China	CHN	2012 Summer	2012	Summer	London	Judo	Judo Men's Extra-Lightweight	NA
+3	Gunnar Nielsen Aaby	M	24	NA	NA	Denmark	DEN	1920 Summer	1920	Summer	Antwerpen	Football	Football Men's Football	NA
+4	Edgar Lindenau Aabye	M	34	NA	NA	Denmark/Sweden	DEN	1900 Summer	1900	Summer	Paris	Tug-Of-War	Tug-Of-War Men's Tug-Of-War	Gold
+5	Christine Jacoba Aaftink	F	21	185	82	Netherlands	NED	1988 Winter	1988	Winter	Calgary	Speed Skating	Speed Skating Women's 500 metres	NA
+5	Christine Jacoba Aaftink	F	21	185	82	Netherlands	NED	1988 Winter	1988	Winter	Calgary	Speed Skating	Speed Skating Women's 1,000 metres	NA
+noc data
+
+
+
+-- noc data
+SELECT * FROM nc LIMIT 6;
+6 records
+NOC	region	notes
+AFG	Afghanistan	NA
+AHO	Curacao	Netherlands Antilles
+ALB	Albania	NA
+ALG	Algeria	NA
+AND	Andorra	NA
+ANG	Angola	NA
+
+
+Discussion
+Exploration of the data using R and SQL showed similar output. The data contain NA values which must be put into consideration to prevent aberration or outliers during further analyses.
+
+
+
+Entity Relationship Diagram (ERD)
+
+
+
+Hypothesis
+An exploration of the data brings some questions into mind. These questions will further be looked at in the subsequent weeks in the course of the capstone project.
+
+
+
+Question
+
+
+What correlation does the age of an athlete have on performance or award of a medal?
+What is the relationship between age and the type of sport?
+Does weight and height contribute to the award of a medal?
+Which sporting event is known to be unequivocally dominated by a country?
+In the 120 years of Olympic Games, which country wins the most medals?
+
+
+Approach
+The athlete_events.csv and noc_regions.csv files will be emerged using the NOC column. The column exists in the two files. NA values might need to be removed or replaced. To answer the questions stated above, the columns Age, Height, Weight, Sport will be considered.
+
+Statistical inference and graphical visualization will be employed to better evaluate these colums and determine if there is any correlation therein.
